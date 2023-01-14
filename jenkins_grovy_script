@@ -38,9 +38,21 @@ node {
                 sh "ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible docker login -u imabhisekh -p $(dockerhub_passwrd)"
                 sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible docker image push imabhisekh/$JOB_NAME:v1.$BUILD_ID'
                 sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible docker image push imabhisekh/$JOB_NAME:latest'
+                
+                      ### if we get error after  6th build then we have to run SEVENTH build with this##
+            sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible docker image rm imabhisekh/$JOB_NAME:v1.$BUILD_ID imabhisekh/$JOB_NAME:latest $JOB_NAME:v1.$BUILD_ID'
+                
               }         
           }
       }
+    ## sixth Build
+    stage('Copy files from ansible to kubernetes server'){
+       sshagent(['kubernetes_server']) {
+        sh 'ssh -o StrictHostKeyChecking=no ubuntu@ pvt_ip_webserver'
+        sh 'scp /var/lib/jenkins/workspace/pipeline-demo/* ubuntu@ pvt_ip_webserver:/home/ubuntu'
+        
+         }
+       }
   }
   
   
