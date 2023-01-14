@@ -51,8 +51,18 @@ node {
         sh 'ssh -o StrictHostKeyChecking=no ubuntu@ pvt_ip_webserver'
         sh 'scp /var/lib/jenkins/workspace/pipeline-demo/* ubuntu@ pvt_ip_webserver:/home/ubuntu'
         
-         }
+          }
        }
+       
+       ## eighth Build 
+     stage('Kubernetes Deployment using ansible') {
+         sshagent(['ansible_demo']) {
+          sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible cd /home/ubuntu'
+          sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible ansible -m ping node'
+          sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible ansible-playbook ansible.yml
+        }
+     }  
   }
+  
   
   
