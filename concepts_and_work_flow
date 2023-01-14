@@ -1,0 +1,16 @@
+we will have a deployment over kubenetes cluster using jenkins cicd pipeline 
+in this project we are going with tools like github, jenkins, ansible, kubenetes cluster and we will learn for kubenetes we should know about deployment and services
+and we will write ansible playbooks along with that we will try to write docker file ..
+
+developer will write docker file it push git hub rep and git will get new comment it will notify jenkins through webhook a new code has come buid it 
+once jenkis will start building , it will pullout all the code from git hub repo , it will ssh to ansible server , it will start executing the image ,based on docker file , 
+once the ansible server build docker image , it will tag it and it will push it to docker hub , 
+then again ansible server will take ssh to the kubernetes cluster server ,and ansible run playbook so that it will run kubectl command on webapp which is kubernets cluster 
+it will try to fetch latest image , the same it will pull from the dockerhub and it will start building the image , from the image it will build container , 
+from that container should be accesssible to ip at the port which going to enable by writing the service.yml in this kube cluster.
+
+3 instances :
+1. jenkins (default-jre + jenkins)
+2. Ansible (python + ansible + docker)
+3. Webapp (docker + minikube)
+
