@@ -1,0 +1,6 @@
+node {
+  
+   stage('Git checkout'){
+       git 'https://github.com/imabhisekh/Project_Devops_git_jen_ansi_doc_kub.git'
+   }
+}
