@@ -1,6 +1,46 @@
 node {
-  
+  ##first Build###
    stage('Git checkout'){
-       git 'https://github.com/imabhisekh/Project_Devops_git_jen_ansi_doc_kub.git'
-   }
-}
+       git 'https://github.com/imabhisekh/Project_Devops_git_jen_ansi_doc_kub.git'    (it will send code on worksapce 
+   
+   }  
+   ##second Build####
+   
+   stage('sending docker file to ansible server over ssh'){
+      sshagent(['ansible_demo']) {
+        sh 'ssh -o StrictHostKeyChecking=no ubuntu@<pvtip_ofansible>'
+         sh 'scp /var/lib/jenkins/workspace/pipeline-demo/* ubuntu@<pvt ip ansible>:/home/ubuntu'
+         }
+      }      
+    ##Third Build###
+    
+    stage('Docker Build image'){
+       sshagent(['ansible_demo']) {
+          sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ansible_ip cd /home/ubuntu/'
+          sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible docker image build -t $JOB_NAME:v1.$BUILD_ID.'
+          }
+      }
+    ##Fourth Build
+    stage('Docker image tagging'){
+       sshagent(['ansible_demo']) {
+          sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ansible_ip cd /home/ubuntu/'                    ## imabhisekh is from dockerhub profilename ##
+          sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible docker image tag -t $JOB_NAME:v1.$BUILD_ID imabhisekh/$JOB_NAME:v1.$BUILD_ID'
+          sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible docker image tag -t $JOB_NAME:v1.$BUILD_ID imabhisekh/$JOB_NAME:latest'
+          }
+      } 
+      
+    ##Fifth Build
+    stage('push docker images to docker hub'){
+       sshagent(['ansible_demo']){
+ #######    here the generated password link from jenkin pipeline script >withCredential BInd credential to var > Binding ADD select Secret text >
+             variable dockerhub_passwrd ADD  > kind choose secrete text > provide dockerhub password in secrate now copy syntax and past 
+       example: withCredentials([string(credentialsId: 'dockerhub-passwrd', variable: 'dockerhub_passwrd')]){   ###############
+                sh "ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible docker login -u imabhisekh -p $(dockerhub_passwrd)"
+                sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible docker image push imabhisekh/$JOB_NAME:v1.$BUILD_ID'
+                sh 'ssh -o StrictHostKeyChecking=no ubuntu@pvt_ip_ansible docker image push imabhisekh/$JOB_NAME:latest'
+              }         
+          }
+      }
+  }
+  
+  
