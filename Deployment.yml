@@ -1,0 +1,20 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+    name: cycle
+spec:
+    replicas: 2
+    selector:  #it tells the controller which pods to watch/belong to
+      matchLabels:
+        app: cycle
+    template:
+       metadata:
+          labels:
+              app: cycle
+       spec:
+         containers:
+           - name: cycle
+             image: imabhisekh/pipeline-demo  #this name from docker hub 
+             imagePullPolicy: Always
+             ports:
+             - containerPort: 80
